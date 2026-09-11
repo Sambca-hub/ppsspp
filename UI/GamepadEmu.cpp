@@ -1064,14 +1064,9 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
     // Custom Driving Layout Switcher Button
 		ConfigTouchPos togglePos = config.touchPauseKey;
 			togglePos.y -= 0.12f;
-				static bool dummyToggle = false;
-					auto layoutToggleBtn = addBoolButton(&dummyToggle, "Drive Mode", roundImage, roundImage, togglePos);
-						if (layoutToggleBtn) {
-								layoutToggleBtn->OnClick.Add([this](UI::EventParams &e) -> UI::EventResult {
-											g_Config.iActiveTouchLayout = (g_Config.iActiveTouchLayout == 0) ? 1 : 0;
-														return UI::EVENT_DONE;
-																});
-																	}
+				MultiTouchButton *toggleBtn = new MultiTouchButton("layout_toggle", roundImage, roundImage, new UI::AnchorLayoutParams(togglePos.x * xres, togglePos.y * yres, UI::NONE, UI::NONE, true));
+					Add(toggleBtn);
+					
 	// touchActionButtonCenter.show will always be true, since that's the default.
 	if (config.bShowTouchCircle)
 		addPSPButton(CTRL_CIRCLE, "Circle button", roundImage, ImageID("I_ROUND"), ImageID("I_CIRCLE"), config.touchActionButtonCenter, circleOffset);

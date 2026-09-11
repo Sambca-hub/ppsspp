@@ -740,9 +740,9 @@ void EmuScreen::ProcessVKey(VirtKey virtKey, bool down) {
 		break;
 
 	case VIRTKEY_LAYOUT_TOGGLE:
-		if (down) {
+			if (down) {
 			g_Config.iActiveTouchLayout = (g_Config.iActiveTouchLayout == 0) ? 1 : 0;
-			RecreateViews();
+			recreateViews_ = true;
 		}
 		break;
 		
