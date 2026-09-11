@@ -25,16 +25,25 @@ jobs:
         with:
           ndk-version: r26b
 
-      - name: Locate and Build APK
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "8.7"
+
+      - name: Build APK
         run: |
-          sudo apt-get install -y gradle
+          # Ensure git describe finds a valid tag for versionCode
+          git tag -f v1.17.0
+          
+          # Navigate to android folder and build
           cd android
-          # Force a valid positive versionCode and versionName
-          gradle assembleNormalDebug -PversionCode=1 -PversionName="1.0.0-custom"
+          gradle assembleNormalDebug -PversionCode=1 -PversionName="1.0.0-custom" || gradle assembleDebug -PversionCode=1 -PversionName="1.0.0-custom"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ppsspp-custom-layout-apk
+          name: ppsspp-custom-apk
           path: |
+            android/app/build/outputs/apk/**/*.apk
+            android/build/outputs/apk/**/*.apk
             **/build/outputs/apk/**/*.apk
