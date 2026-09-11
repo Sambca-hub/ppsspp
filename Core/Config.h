@@ -173,6 +173,8 @@ public:
 	size_t Size() const override { return sizeof(Config); }
 
 	// Whether to save the config on close.
+	// Custom Driving Layout Profile (0 = Foot, 1 = Driving)
+	int iActiveTouchLayout = 0;
 	bool bSaveSettings;
 	bool bFirstRun;
 	bool bUpdatedInstanceCounter = false;
