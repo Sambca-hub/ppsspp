@@ -1,7 +1,7 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch: # Allows you to trigger the build manually with one click
+  workflow_dispatch:
 
 jobs:
   build:
@@ -25,14 +25,26 @@ jobs:
         with:
           ndk-version: r26b
 
-      - name: Build Debug APK
+      - name: Locate and Build APK
         run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleNormalDebug
+          # Find gradlew whether it is in root or android/
+          if [ -f "./gradlew" ]; then
+            chmod +x ./gradlew
+            ./gradlew assembleNormalDebug
+          elif [ -f "./android/gradlew" ]; then
+            cd android
+            chmod +x ./gradlew
+            ./gradlew assembleNormalDebug
+          else
+            # If gradlew wrapper is missing, use system gradle to build android project
+            sudo apt-get install -y gradle
+            cd android
+            gradle assembleNormalDebug
+          fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ppsspp-custom-layout-apk
-          path: android/app/build/outputs/apk/normal/debug/*.apk
+          path: |
+            **/build/outputs/apk/**/*.apk
