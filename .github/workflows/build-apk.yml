@@ -27,20 +27,10 @@ jobs:
 
       - name: Locate and Build APK
         run: |
-          # Find gradlew whether it is in root or android/
-          if [ -f "./gradlew" ]; then
-            chmod +x ./gradlew
-            ./gradlew assembleNormalDebug
-          elif [ -f "./android/gradlew" ]; then
-            cd android
-            chmod +x ./gradlew
-            ./gradlew assembleNormalDebug
-          else
-            # If gradlew wrapper is missing, use system gradle to build android project
-            sudo apt-get install -y gradle
-            cd android
-            gradle assembleNormalDebug
-          fi
+          sudo apt-get install -y gradle
+          cd android
+          # Force a valid positive versionCode and versionName
+          gradle assembleNormalDebug -PversionCode=1 -PversionName="1.0.0-custom"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
