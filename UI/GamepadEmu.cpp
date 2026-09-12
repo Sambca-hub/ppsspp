@@ -1061,12 +1061,17 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 			button->SetMinimumAlpha(0.1f);
 		}
 	}
-    // Custom Driving Layout Switcher Button
+    // Driving Layout Switcher (Tap to Toggle)
 		ConfigTouchPos togglePos = config.touchPauseKey;
-			togglePos.x += 0.12f; // Shift to the right of the Pause icon
-				togglePos.y += 0.02f; // Stay well inside the top edge
-					MultiTouchButton *toggleBtn = new MultiTouchButton("layout_toggle", roundImage, roundImage, ImageID::invalid(), 1.0f, new UI::AnchorLayoutParams(togglePos.x * bounds_.w, togglePos.y * bounds_.h, UI::NONE, UI::NONE));
-						Add(toggleBtn);
+			togglePos.x += 0.12f;
+				togglePos.y += 0.02f;
+					UI::Button *toggleBtn = new UI::Button("Drive", new UI::AnchorLayoutParams(togglePos.x * bounds_.w, togglePos.y * bounds_.h, UI::NONE, UI::NONE));
+						toggleBtn->OnClick.Add([this](UI::EventParams &e) -> UI::EventResult {
+								g_Config.iActiveTouchLayout = (g_Config.iActiveTouchLayout == 0) ? 1 : 0;
+										RecreateViews();
+												return UI::EVENT_DONE;
+													});
+														Add(toggleBtn);
 					
 	// touchActionButtonCenter.show will always be true, since that's the default.
 	if (config.bShowTouchCircle)
@@ -1100,8 +1105,43 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 		Add(new PSPDpad(dirImage, "D-pad", ImageID("I_DIR"), ImageID("I_ARROW"), config.touchDpad.scale, config.fDpadSpacing, buttonLayoutParams(config.touchDpad)));
 	}
 
-	if (config.touchAnalogStick.show)
+	if (config.touchAnalogStick.show && g_Config.iActiveTouchLayout == 0)
 		Add(new PSPStick(stickBg, "Left analog stick", stickImage, ImageID("I_STICK"), 0, config.touchAnalogStick.scale, buttonLayoutParams(config.touchAnalogStick)));
+
+    if (g_Config.iActiveTouchLayout == 1) {
+				float steerY = config.touchAnalogStick.y * bounds_.h;
+						float steerLeftX = (config.touchAnalogStick.x - 0.08f) * bounds_.w;
+								float steerRightX = (config.touchAnalogStick.x + 0.08f) * bounds_.w;
+
+										MultiTouchButton *leftSteerBtn = new MultiTouchButton(
+													"steer_left", roundImage, roundImage, ImageID::invalid(), 1.2f,
+																new UI::AnchorLayoutParams(steerLeftX, steerY, UI::NONE, UI::NONE)
+																		);
+																				leftSteerBtn->OnTouch.Add([](UI::EventParams &e) -> UI::EventResult {
+																							if (e.flags & TOUCH_DOWN) {
+																											__CtrlSetAnalogX(-1.0f);
+																														} else if (e.flags & TOUCH_UP) {
+																																		__CtrlSetAnalogX(0.0f);
+																																					}
+																																								return UI::EVENT_DONE;
+																																										});
+																																												Add(leftSteerBtn);
+
+																																														MultiTouchButton *rightSteerBtn = new MultiTouchButton(
+																																																	"steer_right", roundImage, roundImage, ImageID::invalid(), 1.2f,
+																																																				new UI::AnchorLayoutParams(steerRightX, steerY, UI::NONE, UI::NONE)
+																																																						);
+																																																								rightSteerBtn->OnTouch.Add([](UI::EventParams &e) -> UI::EventResult {
+																																																											if (e.flags & TOUCH_DOWN) {
+																																																															__CtrlSetAnalogX(1.0f);
+																																																																		} else if (e.flags & TOUCH_UP) {
+																																																																						__CtrlSetAnalogX(0.0f);
+																																																																									}
+																																																																												return UI::EVENT_DONE;
+																																																																														});
+																																																																																Add(rightSteerBtn);
+																																																																																	}
+	}
 
 	if (config.touchRightAnalogStick.show) {
 		if (g_Config.bRightAnalogCustom)
