@@ -48,7 +48,7 @@ std::set<int> g_activeGesturePointers;																																										
 class PSPAnalogSteerButton : public MultiTouchButton {
 	public:
 		PSPAnalogSteerButton(float targetX, ImageID bgImg, ImageID bgDownImg, ImageID img, float scale, UI::LayoutParams *layoutParams)
-				: MultiTouchButton(0, "Steer button", bgImg, bgDownImg, img, scale, layoutParams), targetX_(targetX) {}
+				: MultiTouchButton("Steer button", bgImg, bgDownImg, img, scale, layoutParams), targetX_(targetX) {}
 
 					bool Touch(const TouchInput &touch) override {
 							bool prevDown = IsDownByTouch();
