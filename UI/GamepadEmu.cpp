@@ -50,20 +50,18 @@ class PSPAnalogSteerButton : public MultiTouchButton {
 		PSPAnalogSteerButton(float targetX, ImageID bgImg, ImageID bgDownImg, ImageID img, float scale, UI::LayoutParams *layoutParams)
 				: MultiTouchButton("Steer button", bgImg, bgDownImg, img, scale, layoutParams), targetX_(targetX) {}
 
-					bool Touch(const TouchInput &touch) override {
-							bool prevDown = IsDownByTouch();
-									bool res = MultiTouchButton::Touch(touch);
-											bool nowDown = IsDownByTouch();
-													if (nowDown != prevDown) {
-																__CtrlSetAnalogX(0, nowDown ? targetX_ : 0.0f);
-																		}
-																				return res;
-																					}
-
-																					private:
-																						float targetX_;
-																						};
-}
+			bool Touch(const TouchInput &touch) override {
+				bool prevDown = IsDownByTouch();
+				bool res = MultiTouchButton::Touch(touch);
+				bool nowDown = IsDownByTouch();
+				if (nowDown != prevDown) {
+					__CtrlSetAnalogX(0, nowDown ? targetX_ : 0.0f);
+				}
+					return res;
+			}
+			private:
+			float targetX_;
+	};
 
 void GamepadUpdateOpacity(float force) {
 	if (force >= 0.0f) {
