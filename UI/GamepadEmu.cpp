@@ -1066,10 +1066,10 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 			togglePos.x += 0.12f;
 				togglePos.y += 0.02f;
 					UI::Button *toggleBtn = new UI::Button("Drive", new UI::AnchorLayoutParams(togglePos.x * bounds_.w, togglePos.y * bounds_.h, UI::NONE, UI::NONE));
-						toggleBtn->OnClick.Add([this](UI::EventParams &e) -> UI::EventResult {
+						toggleBtn->OnClick.Add([this](UI::EventParams &e) -> UI::EventReturn {
 								g_Config.iActiveTouchLayout = (g_Config.iActiveTouchLayout == 0) ? 1 : 0;
 										RecreateViews();
-												return UI::EVENT_DONE;
+												return UI::EVENT_HANDLED;
 													});
 														Add(toggleBtn);
 					
@@ -1109,15 +1109,15 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 		Add(new PSPStick(stickBg, "Left analog stick", stickImage, ImageID("I_STICK"), 0, config.touchAnalogStick.scale, buttonLayoutParams(config.touchAnalogStick)));
 
     // Show Steer Left / Right buttons ONLY in Driving Mode (Layout 1)
-	if (g_Config.iActiveTouchLayout == 1) {
-		ConfigTouchPos leftSteerPos = config.touchAnalogStick;
-			leftSteerPos.x -= 0.08f;
-			addPSPButton(CTRL_LEFT, "Steer left", roundImage, ImageID("I_ARROW_LEFT"), false, buttonLayoutParams(leftSteerPos));
+		if (g_Config.iActiveTouchLayout == 1) {
+				ConfigTouchPos leftSteerPos = config.touchAnalogStick;
+						leftSteerPos.x -= 0.08f;
+								addPSPButton(CTRL_LEFT, "Steer left", roundImage, roundImage, ImageID("I_ARROW_LEFT"), leftSteerPos);
 
-		ConfigTouchPos rightSteerPos = config.touchAnalogStick;
-			rightSteerPos.x += 0.08f;
-			addPSPButton(CTRL_RIGHT, "Steer right", roundImage, ImageID("I_ARROW_RIGHT"), false, buttonLayoutParams(rightSteerPos));
-	}
+										ConfigTouchPos rightSteerPos = config.touchAnalogStick;
+												rightSteerPos.x += 0.08f;
+														addPSPButton(CTRL_RIGHT, "Steer right", roundImage, roundImage, ImageID("I_ARROW_RIGHT"), rightSteerPos);
+															}
 
 	if (config.touchRightAnalogStick.show) {
 		if (g_Config.bRightAnalogCustom)
