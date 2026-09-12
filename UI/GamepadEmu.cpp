@@ -1066,11 +1066,10 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 			togglePos.x += 0.12f;
 				togglePos.y += 0.02f;
 					UI::Button *toggleBtn = new UI::Button("Drive", new UI::AnchorLayoutParams(togglePos.x * bounds_.w, togglePos.y * bounds_.h, UI::NONE, UI::NONE));
-						toggleBtn->OnClick.Handle(this, [](UI::EventParams &e) {
+						toggleBtn->OnClick.Add([](UI::EventParams &e) {
 								g_Config.iActiveTouchLayout = (g_Config.iActiveTouchLayout == 0) ? 1 : 0;
-										return UI::EVENT_DONE;
-											});
-												Add(toggleBtn);
+									});
+										Add(toggleBtn);
 					
 	// touchActionButtonCenter.show will always be true, since that's the default.
 	if (config.bShowTouchCircle)
@@ -1105,7 +1104,7 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 	}
 
 	if (config.touchAnalogStick.show && g_Config.iActiveTouchLayout == 0) {
-			Add(new PSPStick(stickBg, "Left analog stick", stickImage, stickImage, ImageID::invalid(), config.touchAnalogStick.scale, buttonLayoutParams(config.touchAnalogStick)));
+    Add(new PSPStick(stickBg, "Left analog stick", stickImage, stickImage, 0, config.touchAnalogStick.scale, buttonLayoutParams(config.touchAnalogStick)));
 	}
 
 	// Show Steer Left / Right buttons ONLY in Driving Mode (Layout 1)
