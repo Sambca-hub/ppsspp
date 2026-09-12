@@ -1063,9 +1063,10 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 	}
     // Custom Driving Layout Switcher Button
 		ConfigTouchPos togglePos = config.touchPauseKey;
-			togglePos.y -= 0.12f;
-		    MultiTouchButton *toggleBtn = new MultiTouchButton("layout_toggle", roundImage, roundImage, ImageID::invalid(), 1.0f, new UI::AnchorLayoutParams(togglePos.x * xres, togglePos.y * yres, UI::NONE, UI::NONE));
-					Add(toggleBtn);
+			togglePos.x += 0.12f; // Shift to the right of the Pause icon
+				togglePos.y += 0.02f; // Stay well inside the top edge
+					MultiTouchButton *toggleBtn = new MultiTouchButton("layout_toggle", roundImage, roundImage, ImageID::invalid(), 1.0f, new UI::AnchorLayoutParams(togglePos.x * bounds_.w, togglePos.y * bounds_.h, UI::NONE, UI::NONE));
+						Add(toggleBtn);
 					
 	// touchActionButtonCenter.show will always be true, since that's the default.
 	if (config.bShowTouchCircle)
