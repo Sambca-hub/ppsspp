@@ -45,6 +45,65 @@ static double g_lastTouch;
 MultiTouchButton *primaryButton[TOUCH_MAX_POINTERS]{};
 std::set<int> g_activeGesturePointers;
 
+class PSPAnalogSteerButton : public GamepadComponent {
+	public:
+		PSPAnalogSteerButton(float targetX, ImageID bgImg, ImageID bgDownImg, ImageID img, float scale, UI::LayoutParams *layoutParams)
+				: GamepadComponent(layoutParams), targetX_(targetX), bgImg_(bgImg), bgDownImg_(bgDownImg), img_(img), scale_(scale) {}
+
+					bool Touch(const TouchInput &touch) override {
+							if (touch.flags & TOUCH_DOWN) {
+										if (bounds_.Contains(touch.x, touch.y)) {
+														down_ = true;
+																		pointerId_ = touch.id;
+																						__CtrlSetAnalogX(0, targetX_);
+																										return true;
+																													}
+																															} else if (touch.flags & TOUCH_MOVE) {
+																																		if (touch.id == pointerId_) {
+																																						if (!bounds_.Contains(touch.x, touch.y)) {
+																																											down_ = false;
+																																																pointerId_ = -1;
+																																																					__CtrlSetAnalogX(0, 0.0f);
+																																																									}
+																																																													return true;
+																																																																}
+																																																																		} else if ((touch.flags & TOUCH_UP) || (touch.flags & TOUCH_CANCEL)) {
+																																																																					if (touch.id == pointerId_) {
+																																																																									down_ = false;
+																																																																													pointerId_ = -1;
+																																																																																	__CtrlSetAnalogX(0, 0.0f);
+																																																																																					return true;
+																																																																																								}
+																																																																																										}
+																																																																																												return false;
+																																																																																													}
+
+																																																																																														void Draw(UIContext &dc) override {
+																																																																																																ImageID bg = down_ ? bgDownImg_ : bgImg_;
+																																																																																																		float opacity = g_Config.iTouchButtonOpacity / 100.0f;
+																																																																																																				uint32_t color = colorAlpha(0xFFFFFF, opacity);
+																																																																																																						if (bg.isValid()) {
+																																																																																																									dc.Draw()->DrawImageCenter(bg, bounds_.centerX(), bounds_.centerY(), scale_, color);
+																																																																																																											}
+																																																																																																													if (img_.isValid()) {
+																																																																																																																dc.Draw()->DrawImageCenter(img_, bounds_.centerX(), bounds_.centerY(), scale_, color);
+																																																																																																																		}
+																																																																																																																			}
+
+																																																																																																																				float GetScale() const override { return scale_; }
+																																																																																																																					void SetScale(float s) override { scale_ = s; }
+
+																																																																																																																					private:
+																																																																																																																						float targetX_;
+																																																																																																																							ImageID bgImg_;
+																																																																																																																								ImageID bgDownImg_;
+																																																																																																																									ImageID img_;
+																																																																																																																										float scale_;
+																																																																																																																											bool down_ = false;
+																																																																																																																												int pointerId_ = -1;
+																																																																																																																												};
+}
+
 void GamepadUpdateOpacity(float force) {
 	if (force >= 0.0f) {
 		g_gamepadOpacity = force;
@@ -1109,28 +1168,15 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 	}
 
 	// Show Steer Left / Right buttons ONLY in Driving Mode (Layout 1)
-	if (g_Config.iActiveTouchLayout == 1) {
-		ConfigTouchPos leftSteerPos = config.touchAnalogStick;
-		leftSteerPos.x -= 0.08f;
-		auto *leftSteer = Add(new PSPButton(CTRL_NO_BUTTON, "Steer left", roundImage, roundImage, ImageID("I_ARROW_LEFT"), config.touchAnalogStick.scale, buttonLayoutParams(leftSteerPos)));
-		leftSteer->OnTouch.Add([](UI::EventParams &e) {
-			if (e.flags & TOUCH_DOWN) {
-			__CtrlSetAnalogX(0, -1.0f);
-				} else if (e.flags & TOUCH_UP) {
-				__CtrlSetAnalogX(0, 0.0f);
-						}
-				});
-		ConfigTouchPos rightSteerPos = config.touchAnalogStick;
-		rightSteerPos.x += 0.08f;
-		auto *rightSteer = Add(new PSPButton(CTRL_NO_BUTTON, "Steer right", roundImage, roundImage, ImageID("I_ARROW_RIGHT"), config.touchAnalogStick.scale, buttonLayoutParams(rightSteerPos)));
-		rightSteer->OnTouch.Add([](UI::EventParams &e) {
-			if (e.flags & TOUCH_DOWN) {
-			__CtrlSetAnalogX(0, 1.0f);
-			    } else if (e.flags & TOUCH_UP) {
-			    __CtrlSetAnalogX(0, 0.0f);
-						}
-		     	});
-	}
+		if (g_Config.iActiveTouchLayout == 1) {
+				ConfigTouchPos leftSteerPos = config.touchAnalogStick;
+						leftSteerPos.x -= 0.08f;
+								Add(new PSPAnalogSteerButton(-1.0f, roundImage, roundImage, ImageID("I_ARROW_LEFT"), config.touchAnalogStick.scale, buttonLayoutParams(leftSteerPos)));
+
+										ConfigTouchPos rightSteerPos = config.touchAnalogStick;
+												rightSteerPos.x += 0.08f;
+														Add(new PSPAnalogSteerButton(1.0f, roundImage, roundImage, ImageID("I_ARROW_RIGHT"), config.touchAnalogStick.scale, buttonLayoutParams(rightSteerPos)));
+															}
 	
 	if (config.touchRightAnalogStick.show) {
 		if (g_Config.bRightAnalogCustom)
