@@ -1068,9 +1068,10 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 					UI::Button *toggleBtn = new UI::Button("Drive", new UI::AnchorLayoutParams(togglePos.x * bounds_.w, togglePos.y * bounds_.h, UI::NONE, UI::NONE));
 						toggleBtn->OnClick.Add([](UI::EventParams &e) {
 								g_Config.iActiveTouchLayout = (g_Config.iActiveTouchLayout == 0) ? 1 : 0;
-									});
-										Add(toggleBtn);
-					
+										System_PostUIMessage(UIMessage::RECREATE_VIEWS);
+											});
+												Add(toggleBtn);
+												
 	// touchActionButtonCenter.show will always be true, since that's the default.
 	if (config.bShowTouchCircle)
 		addPSPButton(CTRL_CIRCLE, "Circle button", roundImage, ImageID("I_ROUND"), ImageID("I_CIRCLE"), config.touchActionButtonCenter, circleOffset);

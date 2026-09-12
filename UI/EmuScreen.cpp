@@ -533,6 +533,10 @@ void EmuScreen::focusChanged(ScreenFocusChange focusChange) {
 void EmuScreen::sendMessage(UIMessage message, const char *value) {
 	// External commands, like from the Windows UI.
 	// This happens on the main thread.
+	if (message == UIMessage::RECREATE_VIEWS) {
+				recreateViews_ = true;
+						return;
+							}
 	if (message == UIMessage::REQUEST_GAME_PAUSE && screenManager()->topScreen() == this) {
 		screenManager()->push(new GamePauseScreen(gamePath_, bootPending_));
 	} else if (message == UIMessage::REQUEST_GAME_STOP) {
