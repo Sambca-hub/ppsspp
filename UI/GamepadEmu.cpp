@@ -43,7 +43,7 @@ static float g_gamepadOpacity;
 static double g_lastTouch;
 
 MultiTouchButton *primaryButton[TOUCH_MAX_POINTERS]{};
-std::set<int> g_activeGesturePointers;
+std::set<int> g_activeGesturePointers;																																																																																																																			float GetScale() const override { retur
 
 class PSPAnalogSteerButton : public GamepadComponent {
 	public:
