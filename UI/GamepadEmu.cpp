@@ -1110,13 +1110,26 @@ GamepadEmuView::GamepadEmuView(const TouchControlConfig &config, float xres, flo
 
 	// Show Steer Left / Right buttons ONLY in Driving Mode (Layout 1)
 	if (g_Config.iActiveTouchLayout == 1) {
-			ConfigTouchPos leftSteerPos = config.touchAnalogStick;
-			leftSteerPos.x -= 0.08f;
-			addPSPButton(CTRL_LEFT, "Steer left", roundImage, roundImage, ImageID("I_ARROW_LEFT"), leftSteerPos);
-
-			ConfigTouchPos rightSteerPos = config.touchAnalogStick;
-			rightSteerPos.x += 0.08f;
-			addPSPButton(CTRL_RIGHT, "Steer right", roundImage, roundImage, ImageID("I_ARROW_RIGHT"), rightSteerPos);
+		ConfigTouchPos leftSteerPos = config.touchAnalogStick;
+		leftSteerPos.x -= 0.08f;
+		auto *leftSteer = Add(new PSPButton(CTRL_NO_BUTTON, "Steer left", roundImage, roundImage, ImageID("I_ARROW_LEFT"), config.touchAnalogStick.scale, buttonLayoutParams(leftSteerPos)));
+		leftSteer->OnTouch.Add([](UI::EventParams &e) {
+			if (e.flags & TOUCH_DOWN) {
+			__CtrlSetAnalogX(0, -1.0f);
+				} else if (e.flags & TOUCH_UP) {
+				__CtrlSetAnalogX(0, 0.0f);
+						}
+				});
+		ConfigTouchPos rightSteerPos = config.touchAnalogStick;
+		rightSteerPos.x += 0.08f;
+		auto *rightSteer = Add(new PSPButton(CTRL_NO_BUTTON, "Steer right", roundImage, roundImage, ImageID("I_ARROW_RIGHT"), config.touchAnalogStick.scale, buttonLayoutParams(rightSteerPos)));
+		rightSteer->OnTouch.Add([](UI::EventParams &e) {
+			if (e.flags & TOUCH_DOWN) {
+			__CtrlSetAnalogX(0, 1.0f);
+			    } else if (e.flags & TOUCH_UP) {
+			    __CtrlSetAnalogX(0, 0.0f);
+						}
+		     	});
 	}
 	
 	if (config.touchRightAnalogStick.show) {
