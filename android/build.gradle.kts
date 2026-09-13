@@ -189,7 +189,7 @@ android {
 	productFlavors {
 		create("normal") {
 			isDefault = true
-			applicationId = "org.ppsspp.ppsspp"
+			applicationId = "org.apexpsp.apexpsp"
 			dimension = "variant"
 			externalNativeBuild {
 				cmake {
@@ -209,7 +209,7 @@ android {
 			}
 		}
 		create("gold") {
-			applicationId = "org.ppsspp.ppssppgold"
+			applicationId = "org.apexpsp.apexpspgold"
 			dimension = "variant"
 			externalNativeBuild {
 				cmake {
@@ -229,7 +229,7 @@ android {
 			}
 		}
 		create("legacy") {
-			applicationId = "org.ppsspp.ppsspplegacy"
+			applicationId = "org.apexpsp.apexpsplegacy"
 			dimension = "variant"
 			targetSdk = 29  // To avoid scoped storage, which is the point of the legacy APK
 			externalNativeBuild {
@@ -250,7 +250,7 @@ android {
 			}
 		}
 		create("vr") {
-			applicationId = "org.ppsspp.ppssppvr"
+			applicationId = "org.apexpsp.apexpspvr"
 			dimension = "variant"
 			targetSdk = 29  // To avoid scoped storage, which doesn't work properly on Oculus
 			externalNativeBuild {
