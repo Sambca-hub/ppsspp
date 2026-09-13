@@ -115,7 +115,7 @@ android {
 	}
 
 	defaultConfig {
-		applicationId = "org.ppsspp.ppsspp"
+		applicationId = "org.apexpsp.apexpsp"
 		// Access the git version info via the extension
 		if (gitVersionName != "unknown") {
 			println("INFO: Overriding Android Version Name, Code: $gitVersionName $gitVersionCode")
