@@ -37,7 +37,7 @@ jobs:
           
           # Navigate to android folder and build
           cd android
-          gradle assembleNormalDebug -PversionCode=1 -PversionName="1.0.0-custom" || gradle assembleDebug -PversionCode=1 -PversionName="1.0.0-custom"
+          gradle assembleNormalOptimized -PversionCode=1 -PversionName="1.0.0-custom"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
